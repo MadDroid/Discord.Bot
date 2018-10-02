@@ -8,7 +8,6 @@ namespace Discord.Bot.Hangman
     public class Hangman : ModuleBase<SocketCommandContext>
     {
         static public int TryesLeft { get; set; }
-        static public string UnderlinedWord { get; set; }
         static public string CurrentWord { get; set; }
         static public string CorrectGuesses { get; set; }
         static public string IncorrectGuesses { get; set; }
@@ -24,18 +23,19 @@ namespace Discord.Bot.Hangman
         [Command("try")]
         public async Task TryLetter(string argument)
         {
-            if (argument.Length > 1)
+            if (argument.Length > 1 && argument.ToLower() != CurrentWord.ToLower())
             {
                 await ReplyAsync("Você não pode chutar mais que uma letra por vez! ( " + argument.ToString() + " : " + (argument.Length - 1) + " letras excedidas )");
+            }
+            else
+            {
 
-                return;
             }
 
             var username = Program.LastUser.Username;
 
             if (CurrentWord.ToLower().Contains(argument.ToLower()))
             {
-                // await ReplyAsync("Acertou: " + "( " + username + " )" + GetUnderlinedWord(argument, CurrentWord));
                 CorrectGuesses += argument.ToLower();
                 await ReplyAsync("Acertou: " + "( " + username + " )" + GetUnderlinedWordRight());
             }
@@ -51,7 +51,7 @@ namespace Discord.Bot.Hangman
                 {
                     await MissTryed(argument);
 
-                    await ReplyAsync("Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft + " " + new Discord.Emoji(":que:"));
+                    await ReplyAsync("Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft + " " + new Emoji(":que:"));
 
                     await Task.Delay(1000);
 
@@ -62,29 +62,6 @@ namespace Discord.Bot.Hangman
                     await ReplyAsync("Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
                 }
             }
-        }
-
-        private string GetUnderlinedWord(string tryed, string word)
-        {
-            string wordToCheck = word.ToLower();
-
-            string tryedValue = tryed.ToLower();
-
-            string valueReturn = string.Empty;
-
-            for (int i = 0; i < word.Length; i++)
-            {
-                if ((word.ToLower())[i] == (tryed.ToLower())[0])
-                {
-                    valueReturn += " " + tryed[0].ToString() + " ";
-                }
-                else
-                {
-                    valueReturn += " - ";
-                }
-            }
-
-            return valueReturn;
         }
 
         private string GetUnderlinedWordRight()
