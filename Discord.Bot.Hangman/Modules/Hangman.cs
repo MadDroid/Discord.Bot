@@ -144,13 +144,23 @@ namespace Discord.Bot.Hangman.Modules
         [Command("tentativas")]
         public async Task DebuTryesLeft()
         {
+            if (string.IsNullOrEmpty(CurrentWord))
+            {
+                GenerateRandomWord();
+            }
+
             await ReplyAsync(new Emoji(":point_right:") + " Tentativas restantes: " + TryesLeft);
         }
 
         [Command("atual")]
         public async Task GetCurrentWord()
         {
-            if(CorrectGuesses == string.Empty)
+            if (string.IsNullOrEmpty(CurrentWord))
+            {
+                GenerateRandomWord();
+            }
+
+            if (CorrectGuesses == string.Empty)
             {
                 await ReplyAsync(new Emoji(":point_right:") + " Palavra atual : " + GetUnderlinedWordEmpty());
             }
