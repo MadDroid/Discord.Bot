@@ -61,6 +61,8 @@ namespace Discord.Bot.Hangman
         {
             var message = arg as SocketUserMessage;
 
+            UpdateLastUser(arg);
+
             if (message is null || message.Author.IsBot) return;
 
             int argPos = 0;
@@ -73,6 +75,13 @@ namespace Discord.Bot.Hangman
                 if (!result.IsSuccess)
                     await LoggingService.Log(result.ErrorReason, result.GetType(), LogSeverity.Info);
             }
+        }
+
+        public void UpdateLastUser(SocketMessage arg)
+        {
+            var message = arg as SocketUserMessage;
+
+            LastUser = message.Author;
         }
     }
 }
