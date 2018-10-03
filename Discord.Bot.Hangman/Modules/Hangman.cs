@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Discord.Bot.Hangman.Modules
 {
-    public class Hangman : SocketCommandContext<ModuleBase>
+    public class Hangman : ModuleBase<SocketCommandContext>
     {
         static public int TryesLeft { get; set; }
         static public string CurrentWord { get; set; }
