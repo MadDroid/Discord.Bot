@@ -20,15 +20,16 @@ namespace Discord.Bot.Hangman
 
         static public SocketUser LastUser { get; set; }
 
-#if DEBUG
-        public static char Prefix = '$';
-#else
+//#if DEBUG
+       // public static char Prefix = '$';
+//#else
         public static char Prefix = '!';
-#endif
+//#endif
 
         private async Task MainAsync()
         {
             string botToken = ConfigurationService.Instance.Configuration.GetSection("bot_token").Value;
+            
 
             client = new DiscordSocketClient();
             commands = new CommandService();
@@ -43,7 +44,7 @@ namespace Discord.Bot.Hangman
 
             LastUser = null;
 
-            Modules.Hangman.CurrentWord = "Tentativa";
+            Modules.Hangman.Words = ConfigurationService.Instance.Configuration.GetSection("words").Value.Split(',');
 
             Modules.Hangman.IncorrectGuesses = string.Empty;
 

@@ -12,6 +12,7 @@ namespace Discord.Bot.Hangman.Modules
         static public string CurrentWord { get; set; }
         static public string CorrectGuesses { get; set; }
         static public string IncorrectGuesses { get; set; }
+        static public string []Words { get; set; }
 
         static public string DefaultAlphabet
         {
@@ -21,7 +22,7 @@ namespace Discord.Bot.Hangman.Modules
             }
         }
 
-        [Command("try")]
+        [Command("tentar")]
         public async Task TryLetter(string argument)
         {
             var username = Program.LastUser.Username;
@@ -32,9 +33,9 @@ namespace Discord.Bot.Hangman.Modules
             {
                 if (argument.ToLower() != CurrentWord.ToLower())
                 {
-                    await ReplyAsync("Você errou em tentar acertar toda palavra" + "( " + username + " )");
-
                     MissTryed(argument);
+
+                    await ReplyAsync("Você errou em tentar acertar toda palavra" + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
                 }
                 else
                 {
@@ -51,7 +52,7 @@ namespace Discord.Bot.Hangman.Modules
             if (CurrentWord.ToLower().Contains(argument.ToLower()))
             {
                 CorrectGuesses += argument.ToLower();
-                await ReplyAsync("Acertou: " + "( " + username + " )" + GetUnderlinedWordRight());
+                await ReplyAsync("Acertou: " + "( " + username + " )" + GetUnderlinedWordRight() + new Emoji(":ok_hand:"));
             }
             else
             {
@@ -59,17 +60,17 @@ namespace Discord.Bot.Hangman.Modules
                 {
                     MissTryed(argument);
 
-                    await ReplyAsync("Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
+                    await ReplyAsync(new Emoji(":no_entry:") + "Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
                 }
                 else if (TryesLeft == 1)
                 {
                     MissTryed(argument);
 
-                    await ReplyAsync("Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft + " " + new Emoji(":que:"));
+                    await ReplyAsync(new Emoji(":no_entry:") + "Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
 
                     await Task.Delay(1000);
 
-                    await ReplyAsync("Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
+                    await ReplyAsync(new Emoji(":warning:") + " Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
                 }
                 else if (TryesLeft == 0)
                 {
@@ -123,34 +124,34 @@ namespace Discord.Bot.Hangman.Modules
             return false;
         }
 
-        [Command("restart")]
+        [Command("reiniciar")]
         public async Task RestartGame()
         {
             TryesLeft = 6;
 
             CorrectGuesses = string.Empty;
 
-            //await GenerateRandomWord();
+            GenerateRandomWord();
 
-            await ReplyAsync("Jogo reiniciado e tentativas zeradas!");
+            await ReplyAsync("Jogo reiniciado e tentativas zeradas! " + new Emoji(":thumbsup:"));
         }
 
-        [Command("tryes")]
+        [Command("tentativas")]
         public async Task DebuTryesLeft()
         {
-            await ReplyAsync("Tentativas restantes: " + TryesLeft);
+            await ReplyAsync(new Emoji(":point_right:") + " Tentativas restantes: " + TryesLeft);
         }
 
-        [Command("current")]
+        [Command("atual")]
         public async Task GetCurrentWord()
         {
             if(CorrectGuesses == string.Empty)
             {
-                await ReplyAsync("Palavra atual : " + GetUnderlinedWordEmpty());
+                await ReplyAsync(new Emoji(":point_right:") + " Palavra atual : " + GetUnderlinedWordEmpty());
             }
             else
             {
-                await ReplyAsync("Palavra atual : " + GetUnderlinedWordRight());
+                await ReplyAsync(new Emoji(":point_right:") + " Palavra atual : " + GetUnderlinedWordRight());
             }
         }
 
@@ -162,11 +163,15 @@ namespace Discord.Bot.Hangman.Modules
             IncorrectGuesses += arg.ToLower();
         }
 
-        public Task GenerateRandomWord()
+        static public void GenerateRandomWord()
         {
-            //CurrentWord = RandomWord;
+            Random random = new Random();
 
-            return Task.CompletedTask;
+            int randomInteger = random.Next(0, 100);
+
+            CurrentWord = Words[randomInteger];
         }
+
+        
     }
 }
