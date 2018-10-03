@@ -25,6 +25,11 @@ namespace Discord.Bot.Hangman.Modules
         [Command("tentar")]
         public async Task TryLetter(string argument)
         {
+            if(string.IsNullOrEmpty(CurrentWord))
+            {
+                GenerateRandomWord();
+            }
+
             var username = Program.LastUser.Username;
 
             #region Exceeded argument input logic
@@ -167,7 +172,7 @@ namespace Discord.Bot.Hangman.Modules
         {
             Random random = new Random();
 
-            int randomInteger = random.Next(0, 100);
+            int randomInteger = random.Next(0, Words.Length -1);
 
             CurrentWord = Words[randomInteger];
         }

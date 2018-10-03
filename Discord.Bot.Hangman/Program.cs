@@ -52,6 +52,7 @@ namespace Discord.Bot.Hangman
 
             Modules.Hangman.TryesLeft = 6;
 
+            Modules.Hangman.CurrentWord = "";
 
             // events inputs
 
