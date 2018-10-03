@@ -9,23 +9,25 @@ namespace Discord.Bot.Hangman.Services
 {
     public class LoggingService
     {
-        DiscordSocketClient client;
-        CommandService commands;
-        readonly ConfigurationService ConfigurationService = ConfigurationService.Instance;
+        readonly DiscordSocketClient client;
+        readonly CommandService commands;
+        readonly ConfigurationService configuration;
 
         readonly string logsDirectory;
         readonly string logsFile;
 
-        public LoggingService(DiscordSocketClient client, CommandService commands)
+        public LoggingService(DiscordSocketClient client, CommandService commands, ConfigurationService configuration)
         {
             this.client = client;
             this.commands = commands;
 
+            this.configuration = configuration;
+
             client.Log += OnLogAsync;
             commands.Log += OnLogAsync;
 
-            logsDirectory = ConfigurationService.Configuration.GetSection("logging")["directory"];
-            logsFile = ConfigurationService.Configuration.GetSection("logging")["files"];
+            logsDirectory = this.configuration.Configuration.GetSection("logging")["directory"];
+            logsFile = this.configuration.Configuration.GetSection("logging")["files"];
         }
 
         private Task OnLogAsync(LogMessage arg)

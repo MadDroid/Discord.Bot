@@ -26,8 +26,6 @@ namespace Discord.Bot.Hangman
 
         private async Task MainAsync()
         {
-            string botToken = ConfigurationService.Instance.Configuration.GetSection("bot_token").Value;
-
             client = new DiscordSocketClient();
             commands = new CommandService();
 
@@ -35,11 +33,14 @@ namespace Discord.Bot.Hangman
                 .AddSingleton(client)
                 .AddSingleton(commands)
                 .AddSingleton<LoggingService>()
+                .AddSingleton<ConfigurationService>()
                 .BuildServiceProvider();
 
             services.GetRequiredService<LoggingService>();
 
             await RegisterCommandsAsync();
+
+            string botToken = services.GetService<ConfigurationService>().Configuration.GetSection("bot_token").Value;
 
             await client.LoginAsync(TokenType.Bot, botToken);
 
