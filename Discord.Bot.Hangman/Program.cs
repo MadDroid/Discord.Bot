@@ -9,6 +9,7 @@ using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Discord;
+using System.Configuration;
 
 namespace Discord.Bot.Hangman
 {
@@ -29,7 +30,7 @@ namespace Discord.Bot.Hangman
             // Depency injection based on the client and commands to get the infos
             _services = new ServiceCollection().AddSingleton(_client).AddSingleton(_commands).BuildServiceProvider();
 
-            string botToken = "NDk2MTkyOTIwMzQxMzE1NjA2.DpQtiQ.ourSV43SSxSiJbxwMfXvw6JHbIQ";
+            string botToken = "";
 
             LastUser = null;
 
