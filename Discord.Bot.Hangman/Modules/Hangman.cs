@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord.Bot.Hangman.Services;
+using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Discord.Bot.Hangman.Modules
         static public string CurrentWord { get; set; }
         static public string CorrectGuesses { get; set; }
         static public string IncorrectGuesses { get; set; }
-        static public string []Words { get; set; }
+        static public string[] Words { get; set; }
         static public bool Started { get; set; }
 
         static public string DefaultAlphabet
@@ -26,7 +27,7 @@ namespace Discord.Bot.Hangman.Modules
         [Command("tentar")]
         public async Task TryLetter(string argument)
         {
-            if(string.IsNullOrEmpty(CurrentWord))
+            if (string.IsNullOrEmpty(CurrentWord))
             {
                 GenerateRandomWord();
             }
@@ -39,11 +40,11 @@ namespace Discord.Bot.Hangman.Modules
                 {
                     MissTryed(argument);
 
-                    await ReplyAsync("Você errou em tentar acertar toda palavra" + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
+                    await ReplyAsync("```Você errou em tentar acertar toda palavra" + "( " + username + " )" + " tentativas restantes: " + TryesLeft + "```");
                 }
                 else
                 {
-                    await ReplyAsync("Você acertou toda a palavra" + "( " + username + " )" + "a palavra era: " + CurrentWord);
+                    await ReplyAsync("```Você acertou toda a palavra" + "( " + username + " )" + "a palavra era: " + CurrentWord + "```");
                 }
 
                 return;
@@ -52,14 +53,14 @@ namespace Discord.Bot.Hangman.Modules
             {
                 if (CurrentWord.ToLower().Contains(argument.ToLower()))
                 {
-                    if(!IncorrectGuesses.ToLower().Contains(argument.ToLower()))
+                    if (!IncorrectGuesses.ToLower().Contains(argument.ToLower()))
                     {
                         CorrectGuesses += argument.ToLower();
                         await ReplyAsync("Acertou: " + "( " + username + " )" + GetUnderlinedWord() + new Emoji(":ok_hand:"));
                     }
                     else
                     {
-                        await ReplyAsync(new Emoji(":no_entry:") + " Você ja tentou: "  + argument + "na palavra atual ( " + username + " )");
+                        await ReplyAsync(new Emoji(":no_entry:") + " Você ja tentou: " + argument + "na palavra atual ( " + username + " )");
                     }
                 }
                 else
@@ -82,11 +83,11 @@ namespace Discord.Bot.Hangman.Modules
                     }
                     else if (TryesLeft == 0)
                     {
-                        await ReplyAsync("Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
+                        await ReplyAsync("```Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord + "```");
                     }
                 }
             }
-            
+
         }
 
         private string GetUnderlinedWord()
@@ -149,7 +150,7 @@ namespace Discord.Bot.Hangman.Modules
         [Command("comandos")]
         public async Task Commands()
         {
-            await ReplyAsync("Lista de comandos :  !reinicar !atual !tentar !tentativas !comandos");
+            await ReplyAsync("```Lista de comandos :  !reinicar !atual !tentar !tentativas !comandos```");
         }
 
         [Command("iniciar")]
@@ -157,7 +158,18 @@ namespace Discord.Bot.Hangman.Modules
         {
             Started = true;
 
-            await ReplyAsync("Jogo iniciado!");
+            await ReplyAsync("```Jogo iniciado!```");
+
+//            string sb = "     --\r\n" +
+//"    |  |\r\n" +
+//"       |\r\n" +
+//"       |\r\n" +
+//"       |\r\n" +
+//"       |\r\n" +
+//"       |\r\n" +
+//"    -------\r\n";
+
+//            await ReplyAsync(sb);
         }
 
         [Command("tentativas")]
@@ -201,11 +213,11 @@ namespace Discord.Bot.Hangman.Modules
         {
             Random random = new Random();
 
-            int randomInteger = random.Next(0, Words.Length -1);
+            int randomInteger = random.Next(0, Words.Length - 1);
 
             CurrentWord = Words[randomInteger];
         }
 
-        
+
     }
 }
