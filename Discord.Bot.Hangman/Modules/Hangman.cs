@@ -121,6 +121,9 @@ namespace Discord.Bot.Hangman.Modules
         public async Task Alphabet()
         {
             var builder = new StringBuilder();
+
+            // TODO: Accented chars must work too
+
             // For each letter in the alphabet...
             for (char c = 'a'; c <= 'z'; c++)
             {
@@ -146,6 +149,8 @@ namespace Discord.Bot.Hangman.Modules
                 await ReplyAsync("Essa palavra já existe.");
                 return;
             }
+
+            // TODO: Accented words must work too
 
             // Check if is a word
             if (!Regex.IsMatch(word, @"^[a-zA-Z]+$"))
