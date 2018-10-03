@@ -141,6 +141,12 @@ namespace Discord.Bot.Hangman.Modules
             await ReplyAsync("Jogo reiniciado e tentativas zeradas! " + new Emoji(":thumbsup:"));
         }
 
+        [Command("comandos")]
+        public async Task Commands()
+        {
+            await ReplyAsync("Lista de comandos :  !reinicar !atual !tentar !tentativas !comandos");
+        }
+
         [Command("tentativas")]
         public async Task DebuTryesLeft()
         {
