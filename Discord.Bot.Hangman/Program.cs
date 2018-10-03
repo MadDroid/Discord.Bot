@@ -42,7 +42,15 @@ namespace Discord.Bot.Hangman
 
             services.GetRequiredService<LoggingService>();
 
-           
+
+            LastUser = null;
+
+            Hangman.CurrentWord = "None";
+
+            // events inputs
+
+            Hangman.TryesLeft = 6;
+
 
             await RegisterCommandsAsync();
 
