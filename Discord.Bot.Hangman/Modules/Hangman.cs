@@ -32,8 +32,6 @@ namespace Discord.Bot.Hangman.Modules
 
             var username = Program.LastUser.Username;
 
-            #region Exceeded argument input logic
-
             if (argument.Length > 1)
             {
                 if (argument.ToLower() != CurrentWord.ToLower())
@@ -49,44 +47,48 @@ namespace Discord.Bot.Hangman.Modules
 
                 return;
             }
-
-            #endregion
-
-            #region Normal argument input logic
-
-            if (CurrentWord.ToLower().Contains(argument.ToLower()))
-            {
-                CorrectGuesses += argument.ToLower();
-                await ReplyAsync("Acertou: " + "( " + username + " )" + GetUnderlinedWordRight() + new Emoji(":ok_hand:"));
-            }
             else
             {
-                if (TryesLeft > 1)
+                if (CurrentWord.ToLower().Contains(argument.ToLower()))
                 {
-                    MissTryed(argument);
-
-                    await ReplyAsync(new Emoji(":no_entry:") + "Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
+                    if(!IncorrectGuesses.ToLower().Contains(argument.ToLower()))
+                    {
+                        CorrectGuesses += argument.ToLower();
+                        await ReplyAsync("Acertou: " + "( " + username + " )" + GetUnderlinedWord() + new Emoji(":ok_hand:"));
+                    }
+                    else
+                    {
+                        await ReplyAsync(new Emoji(":no_entry:") + " Você ja tentou: "  + argument + "na palavra atual ( " + username + " )");
+                    }
                 }
-                else if (TryesLeft == 1)
+                else
                 {
-                    MissTryed(argument);
+                    if (TryesLeft > 1)
+                    {
+                        MissTryed(argument);
 
-                    await ReplyAsync(new Emoji(":no_entry:") + "Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
+                        await ReplyAsync(new Emoji(":no_entry:") + "Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
+                    }
+                    else if (TryesLeft == 1)
+                    {
+                        MissTryed(argument);
 
-                    await Task.Delay(1000);
+                        await ReplyAsync(new Emoji(":no_entry:") + "Errou: " + "( " + username + " )" + " tentativas restantes: " + TryesLeft);
 
-                    await ReplyAsync(new Emoji(":warning:") + " Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
-                }
-                else if (TryesLeft == 0)
-                {
-                    await ReplyAsync("Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
+                        await Task.Delay(1000);
+
+                        await ReplyAsync(new Emoji(":warning:") + " Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
+                    }
+                    else if (TryesLeft == 0)
+                    {
+                        await ReplyAsync("Acabaram todas as tentativas desta palavra, a palavra era: " + CurrentWord);
+                    }
                 }
             }
-
-            #endregion
+            
         }
 
-        private string GetUnderlinedWordRight()
+        private string GetUnderlinedWord()
         {
             string wordToCheck = CurrentWord.ToLower();
 
@@ -136,6 +138,8 @@ namespace Discord.Bot.Hangman.Modules
 
             CorrectGuesses = string.Empty;
 
+            IncorrectGuesses = string.Empty;
+
             GenerateRandomWord();
 
             await ReplyAsync("Jogo reiniciado e tentativas zeradas! " + new Emoji(":thumbsup:"));
@@ -172,7 +176,7 @@ namespace Discord.Bot.Hangman.Modules
             }
             else
             {
-                await ReplyAsync(new Emoji(":point_right:") + " Palavra atual : " + GetUnderlinedWordRight());
+                await ReplyAsync(new Emoji(":point_right:") + " Palavra atual : " + GetUnderlinedWord());
             }
         }
 
