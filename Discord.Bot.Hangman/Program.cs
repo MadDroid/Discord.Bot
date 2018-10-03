@@ -7,7 +7,6 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
-
 namespace Discord.Bot.Hangman
 {
     class Program
@@ -42,14 +41,13 @@ namespace Discord.Bot.Hangman
 
             services.GetRequiredService<LoggingService>();
 
-
             LastUser = null;
 
-            Hangman.CurrentWord = "None";
+            Modules.Hangman.CurrentWord = "None";
 
             // events inputs
 
-            Hangman.TryesLeft = 6;
+            Modules.Hangman.TryesLeft = 6;
 
 
             await RegisterCommandsAsync();
