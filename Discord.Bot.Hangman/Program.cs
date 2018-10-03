@@ -7,6 +7,7 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
+
 namespace Discord.Bot.Hangman
 {
     class Program
@@ -41,6 +42,8 @@ namespace Discord.Bot.Hangman
 
             services.GetRequiredService<LoggingService>();
 
+           
+
             await RegisterCommandsAsync();
 
             await client.LoginAsync(TokenType.Bot, botToken);
@@ -61,14 +64,14 @@ namespace Discord.Bot.Hangman
         {
             var message = arg as SocketUserMessage;
 
-            UpdateLastUser(arg);
-
             if (message is null || message.Author.IsBot) return;
 
             int argPos = 0;
 
             if (message.HasCharPrefix(Prefix, ref argPos) || message.HasMentionPrefix(client.CurrentUser, ref argPos))
             {
+                UpdateLastUser(arg);
+
                 var context = new SocketCommandContext(client, message);
                 var result = await commands.ExecuteAsync(context, argPos, services);
 
