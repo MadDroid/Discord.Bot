@@ -101,6 +101,18 @@ namespace Discord.Bot.Hangman.Modules
             return valueReturn;
         }
 
+        private string GetUnderlinedWordEmpty()
+        {
+            string valueReturn = string.Empty;
+
+            for (int i = 0; i < CurrentWord.Length; i++)
+            {
+                valueReturn += " - ";
+            }
+
+            return valueReturn;
+        }
+
         public bool CompareChars(string currentIndex, string build)
         {
             if (build.ToLower().Contains(currentIndex.ToLower()))
@@ -127,6 +139,19 @@ namespace Discord.Bot.Hangman.Modules
         public async Task DebuTryesLeft()
         {
             await ReplyAsync("Tentativas restantes: " + TryesLeft);
+        }
+
+        [Command("current")]
+        public async Task GetCurrentWord()
+        {
+            if(CorrectGuesses == string.Empty)
+            {
+                await ReplyAsync("Palavra atual : " + GetUnderlinedWordEmpty());
+            }
+            else
+            {
+                await ReplyAsync("Palavra atual : " + GetUnderlinedWordRight());
+            }
         }
 
 

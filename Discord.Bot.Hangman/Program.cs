@@ -43,12 +43,16 @@ namespace Discord.Bot.Hangman
 
             LastUser = null;
 
-            Modules.Hangman.CurrentWord = "None";
+            Modules.Hangman.CurrentWord = "Tentativa";
 
-            // events inputs
+            Modules.Hangman.IncorrectGuesses = string.Empty;
+
+            Modules.Hangman.CorrectGuesses = string.Empty;
 
             Modules.Hangman.TryesLeft = 6;
 
+
+            // events inputs
 
             await RegisterCommandsAsync();
 
