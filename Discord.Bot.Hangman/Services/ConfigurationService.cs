@@ -9,7 +9,8 @@ namespace Discord.Bot.Hangman.Services
         public ConfigurationService()
         {
             Configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true)
+                .AddJsonFile("appsettings.json", false)
+                .AddJsonFile("dictionary.json", false, true)
                 .Build();
         }
     }

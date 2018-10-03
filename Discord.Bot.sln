@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord.Bot.Hangman", "Discord.Bot.Hangman\Discord.Bot.Hangman.csproj", "{3EEBEECA-E545-4B55-868B-763808141FF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.Bot.Hangman", "Discord.Bot.Hangman\Discord.Bot.Hangman.csproj", "{3EEBEECA-E545-4B55-868B-763808141FF7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MadDroid.Helpers", "..\MadDroid\MadDroid.Helpers\MadDroid.Helpers.csproj", "{F3B68718-FD8D-4727-8EE9-D7DC7C417988}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3EEBEECA-E545-4B55-868B-763808141FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EEBEECA-E545-4B55-868B-763808141FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EEBEECA-E545-4B55-868B-763808141FF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3B68718-FD8D-4727-8EE9-D7DC7C417988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3B68718-FD8D-4727-8EE9-D7DC7C417988}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3B68718-FD8D-4727-8EE9-D7DC7C417988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3B68718-FD8D-4727-8EE9-D7DC7C417988}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
