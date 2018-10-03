@@ -13,6 +13,7 @@ namespace Discord.Bot.Hangman.Modules
         static public string CorrectGuesses { get; set; }
         static public string IncorrectGuesses { get; set; }
         static public string []Words { get; set; }
+        static public bool Started { get; set; }
 
         static public string DefaultAlphabet
         {
@@ -149,6 +150,14 @@ namespace Discord.Bot.Hangman.Modules
         public async Task Commands()
         {
             await ReplyAsync("Lista de comandos :  !reinicar !atual !tentar !tentativas !comandos");
+        }
+
+        [Command("iniciar")]
+        public async Task Start()
+        {
+            Started = true;
+
+            await ReplyAsync("Jogo iniciado!");
         }
 
         [Command("tentativas")]
