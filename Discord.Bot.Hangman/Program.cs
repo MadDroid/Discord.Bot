@@ -18,6 +18,8 @@ namespace Discord.Bot.Hangman
         private CommandService commands;
         private IServiceProvider services;
 
+        static public SocketUser LastUser { get; set; }
+
 #if DEBUG
         public static char Prefix = '$';
 #else
