@@ -17,11 +17,6 @@ namespace Discord.Bot.Hangman.Modules
     {
         #region Private Properties
         /// <summary>
-        /// The configuration
-        /// </summary>
-        IConfiguration Configuration { get; }
-
-        /// <summary>
         /// A list of the words
         /// </summary>
         List<string> Words { get; } = new List<string>();
@@ -45,12 +40,10 @@ namespace Discord.Bot.Hangman.Modules
         #endregion
 
         #region Constructor
-        public Hangman(ConfigurationService configurationService)
+        public Hangman(IConfiguration configuration)
         {
-            // Initiate the configuration
-            Configuration = configurationService.Configuration;
             // Get the section with the words
-            var section = Configuration.GetSection("words");
+            var section = configuration.GetSection("words");
 
             foreach (var item in section.AsEnumerable())
             {
@@ -87,7 +80,7 @@ namespace Discord.Bot.Hangman.Modules
                 rightChars.Add(ch);
 
                 // Reply with the skeloton word
-                await ReplyAsync($"```{GetWordSkeleton()}```");
+                await ReplyAsync($"`{GetWordSkeleton()}`");
             }
             else
             {
@@ -137,7 +130,7 @@ namespace Discord.Bot.Hangman.Modules
                     builder.Append('_');
             }
             // Relpy
-            await ReplyAsync($"```{builder.ToString()}```");
+            await ReplyAsync($"`{builder.ToString()}`");
         }
 
         [Command("add")]
@@ -199,6 +192,13 @@ namespace Discord.Bot.Hangman.Modules
             }
             // Return the string
             return builder.ToString();
+        }
+
+        [Command("tip"), Alias("dica")]
+        public async Task Tip()
+        {
+            // Reply the word size
+            await ReplyAsync($"A palavra tem {currentWord.Length} letras.");
         }
 
         /// <summary>
