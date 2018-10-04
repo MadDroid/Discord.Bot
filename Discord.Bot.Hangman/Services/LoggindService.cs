@@ -11,12 +11,11 @@ namespace Discord.Bot.Hangman.Services
     {
         readonly DiscordSocketClient client;
         readonly CommandService commands;
-        readonly ConfigurationService configuration;
+        readonly IConfiguration configuration;
+        readonly string logsPath;
+        readonly string logFile = $"{DateTime.Now.ToString("dd-MM-yyyy")}.txt";
 
-        readonly string logsDirectory;
-        readonly string logsFile;
-
-        public LoggingService(DiscordSocketClient client, CommandService commands, ConfigurationService configuration)
+        public LoggingService(DiscordSocketClient client, CommandService commands, IConfiguration configuration)
         {
             this.client = client;
             this.commands = commands;
@@ -26,48 +25,35 @@ namespace Discord.Bot.Hangman.Services
             client.Log += OnLogAsync;
             commands.Log += OnLogAsync;
 
-            logsDirectory = this.configuration.Configuration.GetSection("logging")["directory"];
-            logsFile = this.configuration.Configuration.GetSection("logging")["files"];
+            logsPath = configuration.GetSection("logging")["directory"] ?? string.Empty;
+
+            if (!Directory.Exists(logsPath))
+                Directory.CreateDirectory(logsPath);
         }
 
         private Task OnLogAsync(LogMessage arg)
         {
             
-            if (!Directory.Exists(logsDirectory))
-            {
-                Directory.CreateDirectory(logsDirectory);
-                Log("Diretótio de logs criado", GetType(), LogSeverity.Info);
-            }
-
-            if (!File.Exists(logsFile))
-            {
-                File.Create(logsFile).Dispose();
-                Log("Arquivo de logs criado", GetType(), LogSeverity.Info);
-            }
-
             string logText = $"{DateTime.Now.ToLongTimeString()} [{arg.Severity}] {arg.Source}: {arg.Exception?.ToString() ?? arg.Message}";
-            File.AppendAllText(logsFile, logText + "\n");
+            File.AppendAllText(Path.Combine(logsPath, logFile), logText + "\n");
 
             return Console.Out.WriteLineAsync(logText);
         }
 
-        public static Task Log(string msg, Type type, LogSeverity severity)
+        public Task Log<T>(string msg, LogSeverity severity)
         {
-            if (!Directory.Exists("Logs"))
-            {
-                Directory.CreateDirectory("Logs");
-                Log("Diretótio de logs criado", typeof(LoggingService), LogSeverity.Info);
-            }
+            string logText = $"{DateTime.Now.ToLongTimeString()} [{severity}] {typeof(T).Name}: {msg}";
 
-            if (!File.Exists("Logs/log.txt"))
-            {
-                File.Create("Logs/log.txt").Dispose();
-                Log("Arquivo de logs criado", typeof(LoggingService), LogSeverity.Info);
-            }
+            File.AppendAllText(Path.Combine(logsPath, logFile), logText + "\n");
 
-            string logText = $"{DateTime.Now.ToLongTimeString()} [{severity}] {type.Name}: {msg}";
+            return Console.Out.WriteLineAsync(logText);
+        }
 
-            File.AppendAllText("Logs/log.txt", logText + "\n");
+        public Task Log(string msg, Type type, LogSeverity severity)
+        {
+            string logText = $"{DateTime.Now.ToLongTimeString()} [{severity}] {type.GetType().Name}: {msg}";
+
+            File.AppendAllText(Path.Combine(logsPath, logFile), logText + "\n");
 
             return Console.Out.WriteLineAsync(logText);
         }

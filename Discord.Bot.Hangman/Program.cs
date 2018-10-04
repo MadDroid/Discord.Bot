@@ -18,29 +18,31 @@ namespace Discord.Bot.Hangman
         private CommandService commands;
         private IServiceProvider services;
 
-#if DEBUG
-        public static char Prefix = '$';
-#else
         public static char Prefix = '!';
-#endif
 
         private async Task MainAsync()
         {
             client = new DiscordSocketClient();
             commands = new CommandService();
 
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", false)
+                .AddInMemoryCollection()
+                .Build();
+
             services = new ServiceCollection()
                 .AddSingleton(client)
                 .AddSingleton(commands)
                 .AddSingleton<LoggingService>()
-                .AddSingleton<ConfigurationService>()
+                .AddSingleton<IConfiguration>(configuration)
                 .BuildServiceProvider();
+
 
             services.GetRequiredService<LoggingService>();
 
             await RegisterCommandsAsync();
 
-            string botToken = services.GetService<ConfigurationService>().Configuration.GetSection("bot_token").Value;
+            string botToken = configuration["bot_token"];
 
             await client.LoginAsync(TokenType.Bot, botToken);
 
@@ -70,7 +72,7 @@ namespace Discord.Bot.Hangman
                 var result = await commands.ExecuteAsync(context, argPos, services);
 
                 if (!result.IsSuccess)
-                    await LoggingService.Log(result.ErrorReason, result.GetType(), LogSeverity.Info);
+                    await services.GetRequiredService<LoggingService>().Log(result.ErrorReason, result.GetType(), LogSeverity.Info);
             }
         }
     }
