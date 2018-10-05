@@ -1,14 +1,13 @@
 ﻿using Discord.Bot.Hangman.Services;
 using Discord.Commands;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using MadDroid.Helpers;
-using System.Text;
-using System;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Discord.Bot.Hangman.Modules
 {
@@ -20,6 +19,8 @@ namespace Discord.Bot.Hangman.Modules
         /// A list of the words
         /// </summary>
         List<string> Words { get; } = new List<string>();
+
+        readonly LoggingService logging;
         #endregion
 
         #region Static Fields
@@ -40,7 +41,7 @@ namespace Discord.Bot.Hangman.Modules
         #endregion
 
         #region Constructor
-        public Hangman(IConfiguration configuration)
+        public Hangman(IConfiguration configuration, LoggingService logging)
         {
             // Get the section with the words
             var section = configuration.GetSection("words");
@@ -57,6 +58,7 @@ namespace Discord.Bot.Hangman.Modules
                 // Get a random word from the list
                 currentWord = Words.Random();
 
+            this.logging = logging;
         }
         #endregion
 
@@ -81,9 +83,19 @@ namespace Discord.Bot.Hangman.Modules
 
                 // Reply with the skeloton word
                 await ReplyAsync($"`{GetWordSkeleton()}`");
+
+                // If the skeleton word is the same as the current word...
+                if (GetWordSkeleton().Replace(" ", "") == currentWord)
+                {
+                    // Reply end game
+                    await ReplyAsync($"Fim de jogo. A palavra era {currentWord}");
+                    // Reset the game
+                    await Reset();
+                }
             }
             else
             {
+                // Reply wrong letter
                 await ReplyAsync("Letra errada.");
             }
 
@@ -101,7 +113,7 @@ namespace Discord.Bot.Hangman.Modules
                 // Reply right word
                 await ReplyAsync($"Acertou :clap:! A palavra era {currentWord}.");
                 // Reset the game
-                Reset();
+                await Reset();
                 return;
             }
             // Reply wrong word
@@ -128,15 +140,17 @@ namespace Discord.Bot.Hangman.Modules
                 else
                     // Append a underline
                     builder.Append('_');
+                // Append a space
+                builder.Append(' ');
             }
             // Relpy
-            await ReplyAsync($"`{builder.ToString()}`");
+            await ReplyAsync($"`{builder.ToString().Trim()}`");
         }
 
         [Command("add")]
         public async Task AddWord(string word)
         {
-            if(Words.Contains(word.ToLower()))
+            if (Words.Contains(word.ToLower()))
             {
                 // Reply existing word
                 await ReplyAsync("Essa palavra já existe.");
@@ -189,9 +203,10 @@ namespace Discord.Bot.Hangman.Modules
                 else
                     // Append a underline
                     builder.Append('_');
+                builder.Append(' ');
             }
             // Return the string
-            return builder.ToString();
+            return builder.ToString().Trim();
         }
 
         [Command("tip"), Alias("dica")]
@@ -205,7 +220,7 @@ namespace Discord.Bot.Hangman.Modules
         public async Task ResetCommand()
         {
             // Reset the game
-            Reset();
+            await Reset();
             // Reply the game was reseted
             await ReplyAsync("O jogo foi reiniciado.");
         }
@@ -213,13 +228,27 @@ namespace Discord.Bot.Hangman.Modules
         /// <summary>
         /// Reset the game
         /// </summary>
-        private void Reset()
+        private async Task Reset()
         {
             // Get a new word from the words list
             currentWord = Words.Random();
             // Clear the lists
             rightChars.Clear();
             doneChars.Clear();
+
+            // Log the new word
+            await Log($"Game reseted by {Context.User.Username}#{Context.User.Discriminator}. New word is {currentWord}");
+        }
+
+        /// <summary>
+        /// A simple method to log to console
+        /// </summary>
+        /// <param name="message">The message to log</param>
+        /// <returns></returns>
+        async Task Log(string message)
+        {
+            // Log the message to console
+            await logging.Log<Hangman>(message, LogSeverity.Info);
         }
     }
 }
