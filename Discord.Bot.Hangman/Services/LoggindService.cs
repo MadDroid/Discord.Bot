@@ -35,7 +35,7 @@ namespace Discord.Bot.Hangman.Services
         {
             
             string logText = $"{DateTime.Now.ToLongTimeString()} [{arg.Severity}] {arg.Source}: {arg.Exception?.ToString() ?? arg.Message}";
-            File.AppendAllText(Path.Combine(logsPath, logFile), logText + "\n");
+            File.AppendAllText(Path.Combine(logsPath, logFile), logText + Environment.NewLine);
 
             return Console.Out.WriteLineAsync(logText);
         }
@@ -44,7 +44,7 @@ namespace Discord.Bot.Hangman.Services
         {
             string logText = $"{DateTime.Now.ToLongTimeString()} [{severity}] {typeof(T).Name}: {msg}";
 
-            File.AppendAllText(Path.Combine(logsPath, logFile), logText + "\n");
+            File.AppendAllText(Path.Combine(logsPath, logFile), logText + Environment.NewLine);
 
             return Console.Out.WriteLineAsync(logText);
         }
@@ -53,7 +53,7 @@ namespace Discord.Bot.Hangman.Services
         {
             string logText = $"{DateTime.Now.ToLongTimeString()} [{severity}] {type.GetType().Name}: {msg}";
 
-            File.AppendAllText(Path.Combine(logsPath, logFile), logText + "\n");
+            File.AppendAllText(Path.Combine(logsPath, logFile), logText + Environment.NewLine);
 
             return Console.Out.WriteLineAsync(logText);
         }
