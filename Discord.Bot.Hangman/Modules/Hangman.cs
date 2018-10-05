@@ -201,6 +201,15 @@ namespace Discord.Bot.Hangman.Modules
             await ReplyAsync($"A palavra tem {currentWord.Length} letras.");
         }
 
+        [Command("reset")]
+        public async Task ResetCommand()
+        {
+            // Reset the game
+            Reset();
+            // Reply the game was reseted
+            await ReplyAsync("O jogo foi reiniciado.");
+        }
+
         /// <summary>
         /// Reset the game
         /// </summary>
