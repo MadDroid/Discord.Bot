@@ -148,7 +148,7 @@ namespace Discord.Bot.Hangman.Modules
                 // Append a space
                 builder.Append(' ');
             }
-            // Relpy
+            // Reply
             await ReplyAsync($"`{builder.ToString().Trim()}`");
         }
 
@@ -208,6 +208,7 @@ namespace Discord.Bot.Hangman.Modules
                 else
                     // Append a underline
                     builder.Append('_');
+                // Append a space
                 builder.Append(' ');
             }
             // Return the string
