@@ -53,12 +53,17 @@ namespace Discord.Bot.Hangman.Modules
                     Words.Add(item.Value);
             }
 
+            // Define the logging
+            this.logging = logging;
+
             // If current word is not set...
             if (string.IsNullOrEmpty(currentWord))
+            {
                 // Get a random word from the list
                 currentWord = Words.Random();
-
-            this.logging = logging;
+                // Log the first word
+                Log($"First word is {currentWord}").Wait();
+            }
         }
         #endregion
 
