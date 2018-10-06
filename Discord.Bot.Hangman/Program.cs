@@ -28,6 +28,7 @@ namespace Discord.Bot.Hangman
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false)
                 .AddJsonFile("dictionary.json", true, true)
+                .AddJsonFile("graphics.json",true,true)
                 .AddInMemoryCollection()
                 .Build();
 
