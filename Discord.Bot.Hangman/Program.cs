@@ -3,9 +3,11 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using MadDroid.DependencyInjection.Logging;
 
 namespace Discord.Bot.Hangman
 {
@@ -17,6 +19,7 @@ namespace Discord.Bot.Hangman
         private DiscordSocketClient client;
         private CommandService commands;
         private IServiceProvider services;
+        private ILogger logger;
 
         public static char Prefix = '!';
 
@@ -33,12 +36,20 @@ namespace Discord.Bot.Hangman
             services = new ServiceCollection()
                 .AddSingleton(client)
                 .AddSingleton(commands)
-                .AddSingleton<LoggingService>()
                 .AddSingleton<IConfiguration>(configuration)
+                .AddLogging(options =>
+                {
+                    options.AddConsole();
+                    options.AddDebug();
+                    options.AddFile("logs.txt");
+                })
                 .BuildServiceProvider();
 
+            logger = services.GetService<ILogger<Program>>();
 
-            services.GetRequiredService<LoggingService>();
+            client.Log += OnLog;
+            commands.Log += OnLog;
+            client.Connected += Client_Connected;
 
             await RegisterCommandsAsync();
 
@@ -49,6 +60,22 @@ namespace Discord.Bot.Hangman
             await client.StartAsync();
 
             await Task.Delay(-1);
+        }
+
+        private Task Client_Connected()
+        {
+            //logger.LogInformation("Logged as {0}#{1}", client.CurrentUser.Username, client.CurrentUser.Discriminator);
+            logger.Log(LogLevel.Information, new EventId(), this, null, (state, exception) =>
+            {
+                return $"Logged in as {client.CurrentUser.Username}#{client.CurrentUser.Discriminator}";
+            });
+            return Task.CompletedTask;
+        }
+
+        Task OnLog(LogMessage arg)
+        {
+            logger.LogInformation(arg.Exception, arg.Message);
+            return Task.CompletedTask;
         }
 
         public async Task RegisterCommandsAsync()
@@ -72,7 +99,7 @@ namespace Discord.Bot.Hangman
                 var result = await commands.ExecuteAsync(context, argPos, services);
 
                 if (!result.IsSuccess)
-                    await services.GetRequiredService<LoggingService>().Log(result.ErrorReason, result.GetType(), LogSeverity.Info);
+                    logger.LogInformation(result.ErrorReason);
             }
         }
     }
